@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/MichaelMure/git-bug/identity"
+
 	"github.com/MichaelMure/git-bug/util/git"
 	"github.com/MichaelMure/git-bug/util/text"
 )
@@ -81,7 +83,7 @@ func (op *CreateOperation) Validate() error {
 	return nil
 }
 
-func NewCreateOp(author Person, unixTime int64, title, message string, files []git.Hash) *CreateOperation {
+func NewCreateOp(author *identity.Identity, unixTime int64, title, message string, files []git.Hash) *CreateOperation {
 	return &CreateOperation{
 		OpBase:  newOpBase(CreateOp, author, unixTime),
 		Title:   title,
@@ -96,11 +98,11 @@ type CreateTimelineItem struct {
 }
 
 // Convenience function to apply the operation
-func Create(author Person, unixTime int64, title, message string) (*Bug, *CreateOperation, error) {
+func Create(author *identity.Identity, unixTime int64, title, message string) (*Bug, *CreateOperation, error) {
 	return CreateWithFiles(author, unixTime, title, message, nil)
 }
 
-func CreateWithFiles(author Person, unixTime int64, title, message string, files []git.Hash) (*Bug, *CreateOperation, error) {
+func CreateWithFiles(author *identity.Identity, unixTime int64, title, message string, files []git.Hash) (*Bug, *CreateOperation, error) {
 	newBug := NewBug()
 	createOp := NewCreateOp(author, unixTime, title, message, files)
 

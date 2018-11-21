@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/MichaelMure/git-bug/identity"
+
 	"github.com/MichaelMure/git-bug/util/git"
 	"github.com/pkg/errors"
 )
@@ -76,8 +78,9 @@ func hashOperation(op Operation) (git.Hash, error) {
 
 // OpBase implement the common code for all operations
 type OpBase struct {
-	OperationType OperationType     `json:"type"`
-	Author        Person            `json:"author"`
+	OperationType OperationType `json:"type"`
+	Author        *identity.Identity
+	AuthorId      string            `json:"author"`
 	UnixTime      int64             `json:"timestamp"`
 	Metadata      map[string]string `json:"metadata,omitempty"`
 	// Not serialized. Store the op's hash in memory.
@@ -88,10 +91,11 @@ type OpBase struct {
 }
 
 // newOpBase is the constructor for an OpBase
-func newOpBase(opType OperationType, author Person, unixTime int64) OpBase {
+func newOpBase(opType OperationType, author *identity.Identity, unixTime int64) OpBase {
 	return OpBase{
 		OperationType: opType,
 		Author:        author,
+		AuthorId:      author.Id(),
 		UnixTime:      unixTime,
 	}
 }
@@ -127,6 +131,10 @@ func opBaseValidate(op Operation, opType OperationType) error {
 
 	if err := op.base().Author.Validate(); err != nil {
 		return errors.Wrap(err, "author")
+	}
+
+	if op.base().AuthorId != op.base().Author.Id() {
+
 	}
 
 	for _, hash := range op.GetFiles() {

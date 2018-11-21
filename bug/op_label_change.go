@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"sort"
 
+	"github.com/MichaelMure/git-bug/identity"
+
 	"github.com/MichaelMure/git-bug/util/git"
 	"github.com/pkg/errors"
 )
@@ -97,7 +99,7 @@ func (op *LabelChangeOperation) Validate() error {
 	return nil
 }
 
-func NewLabelChangeOperation(author Person, unixTime int64, added, removed []Label) *LabelChangeOperation {
+func NewLabelChangeOperation(author *identity.Identity, unixTime int64, added, removed []Label) *LabelChangeOperation {
 	return &LabelChangeOperation{
 		OpBase:  newOpBase(LabelChangeOp, author, unixTime),
 		Added:   added,
@@ -107,7 +109,7 @@ func NewLabelChangeOperation(author Person, unixTime int64, added, removed []Lab
 
 type LabelChangeTimelineItem struct {
 	hash     git.Hash
-	Author   Person
+	Author   *identity.Identity
 	UnixTime Timestamp
 	Added    []Label
 	Removed  []Label
@@ -118,7 +120,7 @@ func (l LabelChangeTimelineItem) Hash() git.Hash {
 }
 
 // ChangeLabels is a convenience function to apply the operation
-func ChangeLabels(b Interface, author Person, unixTime int64, add, remove []string) ([]LabelChangeResult, *LabelChangeOperation, error) {
+func ChangeLabels(b Interface, author *identity.Identity, unixTime int64, add, remove []string) ([]LabelChangeResult, *LabelChangeOperation, error) {
 	var added, removed []Label
 	var results []LabelChangeResult
 

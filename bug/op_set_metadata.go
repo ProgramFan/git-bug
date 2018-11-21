@@ -1,6 +1,9 @@
 package bug
 
-import "github.com/MichaelMure/git-bug/util/git"
+import (
+	"github.com/MichaelMure/git-bug/identity"
+	"github.com/MichaelMure/git-bug/util/git"
+)
 
 var _ Operation = &SetMetadataOperation{}
 
@@ -53,7 +56,7 @@ func (op *SetMetadataOperation) Validate() error {
 	return nil
 }
 
-func NewSetMetadataOp(author Person, unixTime int64, target git.Hash, newMetadata map[string]string) *SetMetadataOperation {
+func NewSetMetadataOp(author *identity.Identity, unixTime int64, target git.Hash, newMetadata map[string]string) *SetMetadataOperation {
 	return &SetMetadataOperation{
 		OpBase:      newOpBase(SetMetadataOp, author, unixTime),
 		Target:      target,
@@ -62,7 +65,7 @@ func NewSetMetadataOp(author Person, unixTime int64, target git.Hash, newMetadat
 }
 
 // Convenience function to apply the operation
-func SetMetadata(b Interface, author Person, unixTime int64, target git.Hash, newMetadata map[string]string) (*SetMetadataOperation, error) {
+func SetMetadata(b Interface, author *identity.Identity, unixTime int64, target git.Hash, newMetadata map[string]string) (*SetMetadataOperation, error) {
 	SetMetadataOp := NewSetMetadataOp(author, unixTime, target, newMetadata)
 	if err := SetMetadataOp.Validate(); err != nil {
 		return nil, err

@@ -20,7 +20,7 @@ const formatVersion = 1
 type OperationPack struct {
 	Operations []Operation
 
-	// Private field so not serialized by gob
+	// Private field so not serialized
 	commitHash git.Hash
 }
 

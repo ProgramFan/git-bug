@@ -1,6 +1,7 @@
 package bug
 
 import (
+	"github.com/MichaelMure/git-bug/identity"
 	"github.com/MichaelMure/git-bug/util/git"
 	"github.com/pkg/errors"
 )
@@ -53,7 +54,7 @@ func (op *SetStatusOperation) Validate() error {
 	return nil
 }
 
-func NewSetStatusOp(author Person, unixTime int64, status Status) *SetStatusOperation {
+func NewSetStatusOp(author *identity.Identity, unixTime int64, status Status) *SetStatusOperation {
 	return &SetStatusOperation{
 		OpBase: newOpBase(SetStatusOp, author, unixTime),
 		Status: status,
@@ -62,7 +63,7 @@ func NewSetStatusOp(author Person, unixTime int64, status Status) *SetStatusOper
 
 type SetStatusTimelineItem struct {
 	hash     git.Hash
-	Author   Person
+	Author   *identity.Identity
 	UnixTime Timestamp
 	Status   Status
 }
@@ -72,7 +73,7 @@ func (s SetStatusTimelineItem) Hash() git.Hash {
 }
 
 // Convenience function to apply the operation
-func Open(b Interface, author Person, unixTime int64) (*SetStatusOperation, error) {
+func Open(b Interface, author *identity.Identity, unixTime int64) (*SetStatusOperation, error) {
 	op := NewSetStatusOp(author, unixTime, OpenStatus)
 	if err := op.Validate(); err != nil {
 		return nil, err
@@ -82,7 +83,7 @@ func Open(b Interface, author Person, unixTime int64) (*SetStatusOperation, erro
 }
 
 // Convenience function to apply the operation
-func Close(b Interface, author Person, unixTime int64) (*SetStatusOperation, error) {
+func Close(b Interface, author *identity.Identity, unixTime int64) (*SetStatusOperation, error) {
 	op := NewSetStatusOp(author, unixTime, ClosedStatus)
 	if err := op.Validate(); err != nil {
 		return nil, err
